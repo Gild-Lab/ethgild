@@ -30,8 +30,8 @@ export const ONE = priceOne;
 export const usdDecimals = 8;
 export const xauDecimals = 8;
 
-export const quotePrice = "172092990000";
-export const basePrice = "154256660000";
+export const quotePrice = "162158020000";
+export const basePrice = "141764000000";
 
 export const fixedPointMul = (a: BigNumber, b: BigNumber): BigNumber =>
   a.mul(b).div(ONE);
@@ -75,6 +75,11 @@ export const deployERC20PriceOracleVault = async (): Promise<
     answeredInRound: 1,
   });
 
+  // 1 hour
+  const baseStaleAfter = 60 * 60;
+  // 48 hours
+  const quoteStaleAfter = 48 * 60 * 60;
+
   const testErc20 = await ethers.getContractFactory("TestErc20");
   const testErc20Contract = await testErc20.deploy();
   await testErc20Contract.deployed();
@@ -85,12 +90,12 @@ export const deployERC20PriceOracleVault = async (): Promise<
   const chainlinkFeedPriceOracleBase =
     await chainlinkFeedPriceOracleFactory.deploy({
       feed: basePriceOracle.address,
-      staleAfter: 1000,
+      staleAfter: baseStaleAfter,
     });
   const chainlinkFeedPriceOracleQuote =
     await chainlinkFeedPriceOracleFactory.deploy({
       feed: quotePriceOracle.address,
-      staleAfter: 1000,
+      staleAfter: quoteStaleAfter,
     });
   await chainlinkFeedPriceOracleBase.deployed();
   await chainlinkFeedPriceOracleQuote.deployed();
